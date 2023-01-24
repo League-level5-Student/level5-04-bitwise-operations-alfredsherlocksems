@@ -29,11 +29,26 @@ import org.junit.jupiter.api.Test;
 public class _02_Rotate {
     
     int rotateLeft(int value, int rotateAmount) {
-        return -1;
+       return -1;
     }
     
     int rotateRight(int value, int rotateAmount) {
-        return -1;
+    	 String s = Integer.toBinaryString(value);
+    	 System.out.println(s);
+         char[] nums = new char[rotateAmount];
+         int temp = 0;
+         StringBuilder b = new StringBuilder();
+         b.append(s);
+         for (int i = s.length() -1; i >= s.length() - rotateAmount; i--) {
+         	nums[temp] = s.charAt(i);
+         	b.deleteCharAt(i);
+         	temp++;
+         }
+         for (int i = 0; i < rotateAmount; i++) {
+         	b.insert(i, nums[i]);
+         }
+         int binary = Integer.parseInt(b.toString());
+         return binary;
     }
     
     @Test
