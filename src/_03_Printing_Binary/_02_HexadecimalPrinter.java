@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -51,23 +52,98 @@ public class _02_HexadecimalPrinter implements ActionListener {
      * Complete these 3 methods. Assume the binary value is an int (32 bits).
      * You don't have to handle negative numbers unless you want the challenge!
      */
-    String binaryToHex(String binaryStr) {
-        return "-";
-    }
     
-    String binaryToDec(String binaryStr) {
-        return "-";
+    
+    //HELPFUL SITES I FOUND:
+    //https://www.permadi.com/tutorial/numDecToHex/
+    //https://kb.iu.edu/d/afdl
+    //https://www.asciitable.com/
+    
+    String binaryToHex(String binaryStr) {
+    	String answer = "";
+    	String decForm = binaryToDec(binaryStr);
+    	int num = Integer.parseInt(decForm);
+    	float remainder = 0f;
+    	ArrayList<String> list = new ArrayList<String>();
+    	boolean loopEnded = false;
+    	while(!loopEnded) {
+    		remainder = num;
+    		remainder = remainder/16;
+    		num = (int) remainder;
+    		remainder = remainder - num;
+    		remainder = remainder * 16;
+    		
+    		if (remainder == 10) {
+    			list.add("A");
+    		}
+    		else if (remainder == 11) {
+    			list.add("B");
+    		}
+    		else if (remainder == 12) {
+    			list.add("C");
+    		}
+    		else if (remainder == 13) {
+    			list.add("D");
+    		}
+    		else if (remainder == 14) {
+    			list.add("E");
+    		} 
+    		else if (remainder == 15) {
+    			list.add("F");
+    		}
+    		else {
+    			list.add("" + remainder);
+    		}
+    		if (num == 0) {
+    			loopEnded = true;
+    		}
+    	}
+    	for (int i = list.size() - 1; i >= 0; i--) {
+    		answer+=list.get(i);
+    	}
+        return "0x" + answer;
+     }
+    
+    String binaryToDec(String binStr) {
+    	int totalNum = 0;
+    	int conversion = 0;
+    	StringBuilder b = new StringBuilder();
+    	b.append(binStr);
+    	b.reverse();
+    	binStr = b.toString();
+    	for (int i = 0; i < binStr.length(); i++) {
+    		if (i == 0) {
+    			conversion = 1;
+    		}
+    		else {
+    			conversion = conversion*2;
+    		}
+    		
+    		if (binStr.charAt(i) == 48) { // checks if char = 0 (48 is 0 in char)
+    			
+    		}
+    		else if (binStr.charAt(i) == 49) { // checks if char = 1 (49 is 1 in char)
+    			totalNum+=conversion;
+    		}
+    		else {
+    			return "Error";
+    		}
+    	}
+        return "" + totalNum;
     }
+       
+
 
     /*
      * ASCII values are exactly 8 bits so return '-' if there isn't.
      */
     String binaryToAscii(String binaryStr) {
         if (binaryStr.length() != 8) {
-            return "-";
+            return "Not 8 bits";
         }
-
-        return "-";
+        int temp = Integer.parseInt(binaryToDec(binaryStr));
+        char c = (char) (temp);
+        return "" + c;
     }
     
     public static void main(String[] args) {
