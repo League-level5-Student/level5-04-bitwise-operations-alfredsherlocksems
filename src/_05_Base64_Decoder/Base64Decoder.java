@@ -56,9 +56,38 @@ public class Base64Decoder {
     //1. Complete this method so that it returns the index in
     //   the base64Chars array that corresponds to the passed in char.
     public static byte convertBase64Char(char c){
-        return 0;
+    	int index = 0;
+    	for (int i = 0; i < base64Chars.length; i++) {
+    		if (c == base64Chars[i]) {
+    			index = i;
+    			break;
+    		}
+    	}
+    	
+        return printByteBinary((byte) index);
     }
-
+    
+    public static byte printByteBinary(byte b) { //MY BINARY PRINTER CODE
+        // We first want to print the bit in the one's place
+    	//System.out.println(b); // b == 1110 0001
+    	byte a = b;
+    	int p = 7;
+    	String s = "";
+    	for (int i = 0; i < 8; i++) {
+    		b = (byte) (b >> p); // 0000 0001
+            // Use the & operator to "mask" the bit in the one's place
+            // This can be done by "anding" (&) it with the value of 1
+        	b = (byte) (b & 1); 
+            // Print the result using System.out.print (NOT System.out.println)
+        	s+=b;
+            //Use this method to print the remaining 7 bits of b
+        	b = a;
+        	p--;
+    	}
+    	byte bit = (byte) Integer.parseInt(s);
+    	return bit;
+    }
+    
     //2. Complete this method so that it will take in a string that is 4
     //   characters long and return an array of 3 bytes (24 bits). The byte
     //   array should be the binary value of the encoded characters.

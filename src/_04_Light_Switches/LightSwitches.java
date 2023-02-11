@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -48,13 +49,19 @@ public class LightSwitches implements GameControlScene {
             };
 
     // 8-bit bitmap. Leave as int so methods won't have to cast to a byte
-    int lightsOnOff = 0;
+    int lightsOnOff = 0b00000000;
+    String s = "";
 
     /*
      * This method should check if the specified light is on, example:
      * index = 6        // return true if pink is on (bit 6 == 1)
      */
     boolean isLightOn(int index) {
+    	printIntBinary(lightsOnOff);
+    	String temp = "0b" + s;
+    	if (temp.charAt(8 - index + 1) == '1' ) {
+    		return true;
+    	}
         return false;
     }
     
@@ -63,6 +70,14 @@ public class LightSwitches implements GameControlScene {
      * index = 4        // turn off yellow only (set bit 4 = 1)
      */
     void turnLightOn(int index) {
+    	printIntBinary(lightsOnOff);
+        String temp = s;
+        StringBuilder b  = new StringBuilder();
+        b.append(temp);
+        b.replace(8 - index,  8 - index, "1");
+        BigInteger bigInteger = new BigInteger(b.toString(), 2);// 2 tells it that it's binary
+        lightsOnOff = bigInteger.intValue(); //might have to fix replace to make it work with 
+        //correct index location
         
     }
     
@@ -71,7 +86,14 @@ public class LightSwitches implements GameControlScene {
      * index = 0        // turn off blue only (set bit 0 = 0)
      */
     void turnLightOff(int index) {
-        
+    	 printIntBinary(lightsOnOff);
+    	 String temp = s;
+         StringBuilder b  = new StringBuilder();
+         b.append(temp);
+         b.replace(8 - index, 8 - index , "0");
+         BigInteger bigInteger = new BigInteger(b.toString(), 2);// 2 tells it that it's binary
+         lightsOnOff = bigInteger.intValue(); //might have to fix replace to make it work with 
+         //correct index location
     }
     
     /*
@@ -79,7 +101,13 @@ public class LightSwitches implements GameControlScene {
      * lightsBitmap = 0b01100110  // lights 1, 2, 5, 6 on
      */
     void turnMultiLightsOn(int lightsBitmap) {
-        
+    	printIntBinary(lightsBitmap);
+    	String temp = "0b" + s;
+        for (int i = 2; i < 10; i++) {
+        	if (temp.charAt(i) == '1') {
+        		turnLightOn(8 - i + 1);
+        	}
+        }
     }
     
     /*
@@ -87,7 +115,13 @@ public class LightSwitches implements GameControlScene {
      * lightsBitmap = 0b10000001  // lights 0, 7 off
      */
     void turnMultiLightsOff(int lightsBitmap) {
-        
+    	printIntBinary(lightsBitmap);
+    	String temp = "0b" + s;
+        for (int i = 2; i < 10; i++) {
+        	if (temp.charAt(i) == '1') {
+        		turnLightOff(8+1 - i );
+        	}
+        }
     }
     
     /*
@@ -100,7 +134,94 @@ public class LightSwitches implements GameControlScene {
      *                               orange(3) and yellow(4) on
      */
     void toggleLights(int lightsBitmap) {
-        
+    	printIntBinary(lightsOnOff);
+        String currentLights = "0b" + s;
+        printIntBinary(lightsBitmap);
+        String toggleLights = s;
+        for (int i = 2; i < 10; i++) {
+        	if (toggleLights.charAt(i) == '1') {
+        		if (currentLights.charAt(i) == '0') {
+        			turnLightOn(8 - i + 1);
+        		}
+        		else {
+        			turnLightOff(8 - i + 1);
+        		}
+        	}
+        }
+    }
+    
+    public void printByteBinary(byte b) {
+        // We first want to print the bit in the one's place
+    	//System.out.println(b); // b == 1110 0001
+    	byte a = b;
+    	int p = 7;
+    	s = "";
+    	for (int i = 0; i < 8; i++) {
+    		b = (byte) (b >> p); // 0000 0001
+            // Use the & operator to "mask" the bit in the one's place
+            // This can be done by "anding" (&) it with the value of 1
+        	b = (byte) (b & 1); 
+            // Print the result using System.out.print (NOT System.out.println)
+        	s+=b;
+            //Use this method to print the remaining 7 bits of b
+        	b = a;
+        	p--;
+    	}
+    }
+
+    public void printShortBinary(short s) {
+        // Create 2 byte variables
+    	byte a = 0;
+    	byte b = 0;
+        // Use bit shifting and masking (&) to save the first
+        // 8 bits of s in one byte, and the second 8 bits of
+        // s in the other byte
+    	short other = s;
+    	System.out.println("s = " + s);
+    	int p = 7;
+    	byte actualA = 0;
+    	for (int i = 0; i < 8; i++) {
+    		a = (byte) (s >> p);
+    		a = (byte) (a & 1);
+    		actualA+=a;
+    		s = other;
+    		p--;
+    	}
+    	System.out.println("This is a: " + actualA);
+    	a = (byte) (s << 8);
+    	b = (byte) s;
+        // Call printByteBinary twice using the two bytes
+        // Make sure they are in the correct order
+    	printByteBinary(a);
+    	printByteBinary(b);
+    }
+
+    public void printIntBinary(int o) {
+        // Create 2 short variables
+    	short a = 0;
+    	short b = 0;
+    	int other = o;
+    	System.out.println("Integer = " + o);
+    	int p = 7;
+    	short actualA = 0;
+    	for (int i = 0; i < 16; i++) {
+    		a = (short) (o >> p);
+    		a = (short) (a & 1);
+    		actualA+=a;
+    		o = other;
+    		p--;
+    	}
+    	System.out.println("This is a: " + actualA);
+    	a = (short) (o << 8);
+    	b = (short) o;
+    	printShortBinary(a);
+    	printShortBinary(b);
+    	   // Use bit shifting and masking (&) to save the first
+        // 16 bits of i in one short, and the second 16 bits of
+        // i in the other short
+
+        // Call printShortBinary twice using the two short variables
+        // Make sure they are in the correct order
     }
     
     void runLightSequence1() {
