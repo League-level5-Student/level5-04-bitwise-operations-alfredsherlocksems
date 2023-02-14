@@ -64,40 +64,38 @@ public class Base64Decoder {
     		}
     	}
     	
-        return printByteBinary((byte) index);
+        return (byte) index;
     }
-    
-    public static byte printByteBinary(byte b) { //MY BINARY PRINTER CODE
-        // We first want to print the bit in the one's place
-    	//System.out.println(b); // b == 1110 0001
-    	byte a = b;
-    	int p = 7;
-    	String s = "";
-    	for (int i = 0; i < 8; i++) {
-    		b = (byte) (b >> p); // 0000 0001
-            // Use the & operator to "mask" the bit in the one's place
-            // This can be done by "anding" (&) it with the value of 1
-        	b = (byte) (b & 1); 
-            // Print the result using System.out.print (NOT System.out.println)
-        	s+=b;
-            //Use this method to print the remaining 7 bits of b
-        	b = a;
-        	p--;
-    	}
-    	byte bit = (byte) Integer.parseInt(s);
-    	return bit;
-    }
-    
+
     //2. Complete this method so that it will take in a string that is 4
     //   characters long and return an array of 3 bytes (24 bits). The byte
     //   array should be the binary value of the encoded characters.
     public static byte[] convert4CharsTo24Bits(String s){
-        return null;
+    	byte[] finalBytes = new byte[3];
+    	
+    	char[] array = s.toCharArray();
+    	finalBytes[0] = (byte) (convertBase64Char(array[0]) << 2 | convertBase64Char(array[1]) >> 4);
+    	finalBytes[1] = (byte) (convertBase64Char(array[1]) << 4 | convertBase64Char(array[2]) >> 2);
+    	finalBytes[2] = (byte) (convertBase64Char(array[2]) << 6 | convertBase64Char(array[3]));
+    	
+        return finalBytes;
     }
 
     //3. Complete this method so that it takes in a string of any length
     //   and returns the full byte array of the decoded base64 characters.
     public static byte[] base64StringToByteArray(String file) {
-        return null;
+    	int count = 0;
+    	byte[] finalBytes = new byte[file.length() / 4 * 3];
+    	for(int i = 0; i < file.length(); i+=4) {
+    		String temp = file.substring(i, i+4);
+    		byte[] bytes = convert4CharsTo24Bits(temp);
+
+    		for (int j = 0; j < 3; j++) {
+    			finalBytes[count] = bytes[j];
+    			count++;
+    		}
+    	}
+    	
+        return finalBytes;
     }
 }
